@@ -1,0 +1,10 @@
+source 'https://rubygems.org'
+
+gem 'sinatra'
+gem 'activerecord'
+gem 'sinatra-activerecord'
+gem 'pry-byebug'
+gem 'rake'
+gem 'byebug'
+gem 'rack-test'
+gem 'pg'
