@@ -26,7 +26,11 @@ post '/login' do
 
 end
 
+# # All other pages should have "protected!" as the first thing that they do.
+# get '/' do
+#   protected!
+# end
 # All other pages should have "protected!" as the first thing that they do.
 get '/' do
-  protected!
+  erb :home
 end
