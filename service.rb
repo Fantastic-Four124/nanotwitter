@@ -4,8 +4,13 @@ require 'byebug'
 
 set :bind, '0.0.0.0' # Needed to work with Vagrant
 
+configure do
+  set :twitter_client, false
+end
+
 helpers do
   def protected!
+    return settings.twitter_client # for testing only
     return if authorized?
     headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
     redirect '/login', 'Incorrect username or password'
@@ -23,14 +28,24 @@ get '/login' do
 end
 
 post '/login' do
-
+  username = params['username']
+  password = params['password']
+  if username == '105' && password == 'pw'
+    settings.twitter_client = true
+    redirect '/'
+  else
+    @texts = 'Wrong password or username.'
+    erb :login
+  end
 end
 
-# # All other pages should have "protected!" as the first thing that they do.
-# get '/' do
-#   protected!
-# end
 # All other pages should have "protected!" as the first thing that they do.
 get '/' do
-  erb :home
+  if protected!
+    @texts = 'logined'
+    erb :home
+  else
+    erb :login
+  end
 end
+# All other pages should have "protected!" as the first thing that they do.
