@@ -14,7 +14,7 @@ helpers do
   def authorized?
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
     # In addition to the checks below, does a call to the user database with the given username and password even exist?
-    @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == #Insert existing username and password combination
+    @auth.provided? and @auth.basic? and @auth.credentials and User.exist?(name: @auth.credentials[0], password: @auth.credentials[1])
   end
 end
 
