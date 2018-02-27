@@ -1,11 +1,11 @@
-### nanotwitter
+# nanotwitter
 Our Git repository for our CS105b project.
 ---------------
 
 
 ## Change History
 ---------------
-# Version 0.1
+### Version 0.1
 The following was added to version 0.1:
 - [x] GitHub repository initialized under the organization name "FantasticFour-124." *(Performed by Cameron Cho)*
 
@@ -16,7 +16,7 @@ The following was added to version 0.1:
 - [x] Mockups for User Interface have been created. (Performed by Tom Willkens)
 
 
-# Version 0.2
+### Version 0.2
 The following was added to version 0.2:
 - [x] Sinatra skeleton application for nanoTwitter constructed. Currently using Activerecord, but are considering the use of MongoDB. (Performed by Cameron Cho)
 
@@ -27,7 +27,7 @@ The following was added to version 0.2:
 - [x] Project deployed on Heroku. (Performed by Alex Hu)
 
 
-# Version 0.3
+### Version 0.3
 The following was added to version 0.3:
 - [x] Codeship account created for nanoTwitter project. It has also been set to autodeploy to Heroku whenever a team member pushes to GitHub. (Performed by Cameron Cho)
 
