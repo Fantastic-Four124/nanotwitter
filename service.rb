@@ -2,6 +2,8 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'byebug'
 
+enable :sessions
+
 set :bind, '0.0.0.0' # Needed to work with Vagrant
 
 configure do
@@ -49,3 +51,22 @@ get '/' do
   end
 end
 # All other pages should have "protected!" as the first thing that they do.
+get '/user/register'
+  if protected!
+    @texts = 'logined'
+    erb :home
+  else
+    erb :register
+  end
+end
+
+get '/search'
+  if protected!
+    @texts = 'logined'
+    erb :search
+  else
+    redirect '/login'
+  end
+end
+
+get ''
