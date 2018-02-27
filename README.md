@@ -26,7 +26,7 @@ The following was added to version 0.2:
 
 - [x] Project deployed on Heroku. (Performed by Alex Hu)
 
-- [x] Test test
+- [x] Test test test!
 
 ### Version 0.3
 The following was added to version 0.3:
