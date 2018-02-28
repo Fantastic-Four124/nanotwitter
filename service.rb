@@ -1,6 +1,11 @@
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'byebug'
+require_relative 'models/user'
+require_relative 'models/hashtag'
+require_relative 'models/mention'
+require_relative 'models/tweet'
+require_relative 'models/hashtag_tweets'
 
 enable :sessions
 
@@ -24,12 +29,17 @@ get '/login' do
 end
 
 post '/login' do
+  user = User.where(username: params['username'], password: params['password'])
   if params['username'] == '105' && params['password'] == 'pw' # User.exist?(username: session[:username], password: session[:password])
     session[:username] = params['username']
     session[:password] = params['password']
     redirect '/'
+  elsif !user.nil?
+    session[:username] = params['username']
+    session[:password] = params['password']
+    session[:user_id] = user[0].id
+    redirect '/'
   else
-
     @texts = 'Wrong password or username.'
     erb :login
   end
@@ -48,21 +58,36 @@ end
 # All other pages should have "protected!" as the first thing that they do.
 get '/user/register' do
   if protected!
-    @texts = 'logged in'
-    erb :home
+    @texts = 'logined'
+    redirect '/'
   else
     erb :register
   end
 end
 
+post '/user/register' do
+  username = params[:register]['username']
+	password = params[:register]['password']
+  @user = User.new(username: username,password: password)
+  if @user.save
+    session[:user_id] = @user.id
+    session[:username] = params['username']
+    session[:password] = params['password']
+    redirect "/"
+  else
+    redirect '/user/register'
+  end
+end
+
 get '/search' do
   if protected!
-    @texts = 'logged in'
+    @texts = 'logined'
     erb :search
   else
     redirect '/login'
   end
 end
+
 
 post '/logout' do
   session.delete(:username)
