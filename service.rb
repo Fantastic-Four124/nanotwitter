@@ -25,11 +25,17 @@ end
 
 get '/login' do
   #byebug
-  erb :login
+  #erb :login
+  if protected!
+    @texts = 'logged in'
+    erb :home
+  else
+    erb :login
+  end
 end
 
 post '/login' do
-  user = User.where(username: params['username'], password: params['password'])
+  user = User.find_by(username: params['username'], password: params['password'])
   if params['username'] == '105' && params['password'] == 'pw' # User.exist?(username: session[:username], password: session[:password])
     session[:username] = params['username']
     session[:password] = params['password']
@@ -37,7 +43,7 @@ post '/login' do
   elsif !user.nil?
     session[:username] = params['username']
     session[:password] = params['password']
-    session[:user_id] = user[0].id
+    session[:user_id] = user.id
     redirect '/'
   else
     @texts = 'Wrong password or username.'
