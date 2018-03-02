@@ -64,7 +64,7 @@ end
 # All other pages should have "protected!" as the first thing that they do.
 get '/user/register' do
   if protected!
-    @texts = 'logined'
+    @texts = 'logged in'
     redirect '/'
   else
     erb :register
@@ -87,7 +87,7 @@ end
 
 get '/search' do
   if protected!
-    @texts = 'logined'
+    @texts = 'logged in'
     erb :search
   else
     redirect '/login'

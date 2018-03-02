@@ -37,6 +37,6 @@ The following was added to version 0.3:
 
 - [ ] Testing interface constructed.
 
-- [ ] Seed data for testing created.
+- [x] Seed data for testing retrieved.
 
 test
