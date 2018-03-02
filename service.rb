@@ -1,6 +1,11 @@
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'byebug'
+require_relative 'models/user'
+require_relative 'models/hashtag'
+require_relative 'models/mention'
+require_relative 'models/tweet'
+require_relative 'models/hashtag_tweets'
 
 enable :sessions
 
@@ -20,16 +25,27 @@ end
 
 get '/login' do
   #byebug
-  erb :login
+  #erb :login
+  if protected!
+    @texts = 'logged in'
+    erb :home
+  else
+    erb :login
+  end
 end
 
 post '/login' do
+  user = User.find_by(username: params['username'], password: params['password'])
   if params['username'] == '105' && params['password'] == 'pw' # User.exist?(username: session[:username], password: session[:password])
     session[:username] = params['username']
     session[:password] = params['password']
     redirect '/'
+  elsif !user.nil?
+    session[:username] = params['username']
+    session[:password] = params['password']
+    session[:user_id] = user.id
+    redirect '/'
   else
-
     @texts = 'Wrong password or username.'
     erb :login
   end
@@ -49,9 +65,23 @@ end
 get '/user/register' do
   if protected!
     @texts = 'logged in'
-    erb :home
+    redirect '/'
   else
     erb :register
+  end
+end
+
+post '/user/register' do
+  username = params[:register]['username']
+	password = params[:register]['password']
+  @user = User.new(username: username,password: password)
+  if @user.save
+    session[:user_id] = @user.id
+    session[:username] = params['username']
+    session[:password] = params['password']
+    redirect "/"
+  else
+    redirect '/user/register'
   end
 end
 
@@ -63,6 +93,7 @@ get '/search' do
     redirect '/login'
   end
 end
+
 
 post '/logout' do
   session.delete(:username)

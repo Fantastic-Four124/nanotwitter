@@ -5,7 +5,7 @@ class CreateUser < ActiveRecord::Migration[5.1]
       t.string :first_name
       t.string :username
       t.text :email
-      t.string :password_digest
+      t.string :password
       t.integer :Number_of_followers
       t.integer :Number_of_leaders
     end
