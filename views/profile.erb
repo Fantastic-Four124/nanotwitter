@@ -1,0 +1,32 @@
+<% if protected! %>
+  <div class="profile position-fixed" id="profile-<%= @user.id %>">
+    <p>User: <%= @user.username %></p>
+    <!--THIS NEEDS FOLLOWERS/LEADERS TO BE IMPLEMENTED -->
+    <p>Leaders: <a href=<%= "user/#{@user.id}/leaders" %>>66</a></p>
+    <p>Followers: <a href=<%= "user/#{@user.id}/followers" %>>33</a></p>
+    <% if @user.username != session[:username] %>
+      <!-- if not following -->
+      <% if true %>
+        <form method="POST" action="user/follow" class="inline">
+          <input type="hidden" name="follow[user_id]" value=<%= @user.id %>>
+          <button type="submit" name="follow" class="btn btn-primary">
+            Follow
+          </button>
+        </form>
+      <% else %>
+        <form method="POST" action="user/unfollow" class="inline">
+          <input type="hidden" name="unfollow[user_id]" value=<%= @user.id %>>
+          <button type="submit" name="unfollow" class="btn btn-primary">
+            Unfollow
+          </button>
+        </form>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="login-box position-fixed" id="profile-1">
+    Log in to nanoTwitter:
+    <br>
+    <a href="login" class="btn btn-primary" role="button">Login</a>
+  </div>
+<% end %>

@@ -7,5 +7,4 @@ class User < ActiveRecord::Base
   has_many :followers, :through => :followings,:source => :user
   has_many :tweets
   has_many :tweets, through: :mentions
-
 end
