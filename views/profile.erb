@@ -1,21 +1,21 @@
 <% if protected! %>
-  <div class="profile position-fixed" id="profile-<%= @user.id %>">
-    <p>User: <%= @user.username %></p>
+  <div class="profile position-fixed" id="profile-<%= @curr_user.id %>">
+    <p>User: <%= @curr_user.username %></p>
     <!--THIS NEEDS FOLLOWERS/LEADERS TO BE IMPLEMENTED -->
-    <p>Leaders: <a href=<%= "user/#{@user.id}/leaders" %>>66</a></p>
-    <p>Followers: <a href=<%= "user/#{@user.id}/followers" %>>33</a></p>
-    <% if @user.username != session[:username] %>
+    <p>Leaders: <a href=<%= "/user/#{@curr_user.id}/leaders" %>>66</a></p>
+    <p>Followers: <a href=<%= "/user/#{@curr_user.id}/followers" %>>33</a></p>
+    <% if @curr_user.username != session[:username] %>
       <!-- if not following -->
       <% if true %>
         <form method="POST" action="user/follow" class="inline">
-          <input type="hidden" name="follow[user_id]" value=<%= @user.id %>>
+          <input type="hidden" name="follow[user_id]" value=<%= @curr_user.id %>>
           <button type="submit" name="follow" class="btn btn-primary">
             Follow
           </button>
         </form>
       <% else %>
         <form method="POST" action="user/unfollow" class="inline">
-          <input type="hidden" name="unfollow[user_id]" value=<%= @user.id %>>
+          <input type="hidden" name="unfollow[user_id]" value=<%= @curr_user.id %>>
           <button type="submit" name="unfollow" class="btn btn-primary">
             Unfollow
           </button>

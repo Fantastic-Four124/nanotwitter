@@ -1,15 +1,32 @@
 .tweet {
   border-style: solid;
+  padding: 10px;
 }
 
 .tweets-wrapper {
   margin-top: 25px;
 }
 
+.tweet-message {
+  padding-left:2em;
+}
+
+.user-list-wrapper {
+  margin-top: 25px;
+}
+
+.user-item {
+  border-style: solid;
+  margin-left: 50px;
+  padding:20px;
+}
+
 .profile {
   border-style: solid;
   padding-right: 50px;
   padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   
 }
 

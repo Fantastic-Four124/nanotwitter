@@ -53,7 +53,7 @@ end
 # All other pages need to have these session objects checked.
 get '/' do
   if protected!
-    @user = session[:user_hash]
+    @curr_user = session[:user_hash]
     tweets = Tweet.where("user_id = '#{session[:user_id]}'").sort_by &:created_at
     tweets.reverse!
     @tweets = tweets[0..50]
@@ -101,11 +101,40 @@ end
 
 get '/users/:user_id' do
   if protected!
-    @user = User.find(params['user_id'])
-    tweets = Tweet.where("user_id = '#{@user.id}'").sort_by &:created_at
+    @curr_user = User.find(params['user_id'])
+    tweets = Tweet.where("user_id = '#{@curr_user.id}'").sort_by &:created_at
     tweets.reverse!
     @tweets = tweets[0..50]
     erb :tweet_feed
+  else
+    redirect '/'
+  end
+end
+
+get '/user/:user_id/followers' do
+  if protected!
+    #TODO: implement followers/leaders; right now using user #2 as dummy
+    @curr_user = User.find(params['user_id'])
+    follower = User.find(2)
+    @user_list = []
+    @user_list << follower
+    @title = 'Followers'
+    erb :user_list
+  else
+    redirect '/'
+  end
+end
+
+
+get '/user/:user_id/leaders' do
+  if protected!
+    #TODO: implement followers/leaders; right now using user #2 as dummy
+    @curr_user = User.find(params['user_id'])
+    follower = User.find(2)
+    @user_list = []
+    @user_list << follower
+    @title = 'Leaders'
+    erb :user_list
   else
     redirect '/'
   end
