@@ -1,0 +1,12 @@
+<div class="tweet" id="tweet-<%= @tweet.id %>">
+  <div class="row">
+    <div class="col-sm-12" style="text-align: left">
+      <a href="/user/<%= @tweet.user.id %>"><%= @tweet.user.username %></a> - <%= TimeDifference.between(@tweet.created_at, DateTime.now).humanize %> ago
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12" style="text-align: left">
+      <span class="tweet-message"><%= @tweet.message %></span>
+    </div>
+  </div>
+</div>
