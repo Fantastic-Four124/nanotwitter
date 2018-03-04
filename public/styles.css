@@ -1,6 +1,7 @@
 .tweet {
   border-style: solid;
   padding: 10px;
+  background-color: white;
 }
 
 .tweets-wrapper {
@@ -18,6 +19,7 @@
 .user-item {
   border-style: solid;
   margin-left: 50px;
+  background-color: white;
   padding:20px;
 }
 
@@ -27,6 +29,7 @@
   padding-left: 10px;
   padding-top: 10px;
   padding-bottom: 10px;
+  background-color: white;
 }
 
 #search-bar {
@@ -47,4 +50,5 @@ span {
 
 body {
   padding-top: 70px;
+  background-color: #A9A9A9 !important;
 }
