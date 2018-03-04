@@ -4,6 +4,18 @@
   background-color: white;
 }
 
+.login-box {
+  border-style: solid;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+}
+
+#tweet-bar {
+  text-align: left;
+  margin-left: 15px;
+}
+
 .tweets-wrapper {
   margin-top: 25px;
 }
@@ -52,3 +64,4 @@ body {
   padding-top: 70px;
   background-color: #A9A9A9 !important;
 }
+
