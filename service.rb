@@ -94,17 +94,17 @@ end
 # All other pages need to have these session objects checked.
 get '/' do
   if protected!
-    #@curr_user = session[:user_hash] 
+    #@curr_user = session[:user_hash]
     # The number will be dynamically changing. We should think about how to change
-    @curr_user = User.find(params['user_id'])
+    @curr_user = User.find(session[:user_id])
     tweets = Tweet.where("user_id = '#{session[:user_id]}'").sort_by &:created_at
     tweets.reverse!
-    @tweets = tweets[0..50]
+    @tweets = tweets[0..49]
     erb :logged_root
   else
     tweets = Tweet.all.sort_by &:created_at
     tweets.reverse!
-    @tweets = tweets[0..50]
+    @tweets = tweets[0..49]
     erb :tweet_feed
   end
 end
@@ -140,7 +140,7 @@ get '/user/:user_id' do
     @curr_user = User.find(params['user_id'])
     tweets = Tweet.where("user_id = '#{@curr_user.id}'").sort_by &:created_at
     tweets.reverse!
-    @tweets = tweets[0..50]
+    @tweets = tweets[0..49]
     erb :tweet_feed
   else
     redirect '/'
@@ -187,7 +187,7 @@ get '/user/:user_id/timeline' do
     end
     tweets.sort_by &:created_at
     tweets.reverse!
-    @tweets = tweets[0..50]
+    @tweets = tweets[0..49]
     erb :tweet_feed
   else
     redirect '/'
