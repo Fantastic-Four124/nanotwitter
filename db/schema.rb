@@ -15,6 +15,11 @@ ActiveRecord::Schema.define(version: 20180216154055) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "events", force: :cascade do |t|
+    t.string "name"
+    t.date "date"
+  end
+
   create_table "hashtag_tweets", force: :cascade do |t|
     t.integer "hashtag_id"
     t.integer "tweet_id"
@@ -27,6 +32,13 @@ ActiveRecord::Schema.define(version: 20180216154055) do
   create_table "mentions", force: :cascade do |t|
     t.string "username"
     t.integer "tweet_id"
+  end
+
+  create_table "persons", force: :cascade do |t|
+    t.string "name"
+    t.date "bday"
+    t.string "sex"
+    t.string "zipcode"
   end
 
   create_table "tweets", force: :cascade do |t|

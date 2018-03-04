@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'byebug'
+require_relative 'test_interface.rb'
 require_relative 'models/user'
 require_relative 'models/hashtag'
 require_relative 'models/mention'
