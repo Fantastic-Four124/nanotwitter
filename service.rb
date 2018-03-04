@@ -24,7 +24,7 @@ helpers do
   end
 
   def identity
-    session[:username] ? session[:username] : 'Hello stranger'
+    session[:username] ? session[:username] : 'Log in'
   end
 end
 
@@ -90,15 +90,6 @@ post '/user/register' do
   end
 end
 
-get '/search' do
-  if protected!
-    @texts = 'logined'
-    erb :search
-  else
-    redirect '/login'
-  end
-end
-
 get '/users/:user_id' do
   if protected!
     @curr_user = User.find(params['user_id'])
@@ -146,6 +137,29 @@ post '/logout' do
   session.delete(:user_id)
   session.delete(:user_hash)
   redirect '/'
+end
+
+
+get '/search' do
+  @curr_user = session[:user_hash]
+  term = params[:search]
+  if term
+    @no_term = false
+    if /([@.])\w+/.match(term)
+      term = term[1..-1]
+      @results = User.where("username like ?", "%#{term}%").sort_by &:created_at
+      @results.reverse!
+      @user_search = true
+    else
+      @results = Tweet.where("message like ?", "%#{term}%").sort_by &:created_at
+      @results.reverse!
+      @user_search = false
+    end
+  else
+    @no_term = true
+    @results = []
+  end
+  erb :search_results
 end
 
 post '/tweets/new' do

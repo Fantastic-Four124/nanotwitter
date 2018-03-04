@@ -7,14 +7,14 @@
     <% if @curr_user.username != session[:username] %>
       <!-- if not following -->
       <% if true %>
-        <form method="POST" action="user/follow" class="inline">
+        <form method="POST" action="/user/follow" class="inline">
           <input type="hidden" name="follow[user_id]" value=<%= @curr_user.id %>>
           <button type="submit" name="follow" class="btn btn-primary">
             Follow
           </button>
         </form>
       <% else %>
-        <form method="POST" action="user/unfollow" class="inline">
+        <form method="POST" action="/user/unfollow" class="inline">
           <input type="hidden" name="unfollow[user_id]" value=<%= @curr_user.id %>>
           <button type="submit" name="unfollow" class="btn btn-primary">
             Unfollow

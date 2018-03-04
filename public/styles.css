@@ -27,7 +27,10 @@
   padding-left: 10px;
   padding-top: 10px;
   padding-bottom: 10px;
-  
+}
+
+#search-bar {
+  padding-left: 50px;
 }
 
 span {
