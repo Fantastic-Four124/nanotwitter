@@ -17,10 +17,18 @@ post '/test/reset/all' do
 end
 
 
-# post "/test/reset/testuser" do
-
-# end
+post "/test/reset/testuser" do
+  
+end
 
 get '/test/version' do
   Version.VERSION.to_json
+end
+
+get '/test/status' do 
+
+end
+
+post '/test/reset/standard?tweets=' do 
+
 end
