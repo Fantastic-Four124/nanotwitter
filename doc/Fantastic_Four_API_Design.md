@@ -19,7 +19,7 @@
 * PUT api/v1/users/{:id}/follow/{leader_id}     
 //Updates the list of user[:id]'s leaders by adding a leader
 
-* PUT api/v1/users/{:id}/unfollow/{leader_id}    
+* DELETE api/v1/users/{:id}/unfollow/{leader_id}    
 //Updates the list of user[:id]'s leaders by removing a leader
 
 * GET api/v1/users/{:id}/leaders                
