@@ -8,19 +8,43 @@ require_relative 'models/tweet'
 require_relative 'models/hashtag_tweets'
 require_relative './version'
 
+# name: testuser
+# email: testuser@sample.com
+# password: “password”
+
+TESTUSER_NAME = 'testuser'
+TESTUSER_EMAIL = 'testuser@sample.com'
+TESTUSER_PASSWORD = 'password'
+
+helpers do
+
+  def recreate_TestUser()
+    result = User.new(username: TESTUSER_NAME, password: TESTUSER_PASSWORD).save
+    puts "Recreate testuser -> #{result}"
+    
+  end
+
+  def clear_all()
+    User.destroy_all
+    Hashtag.destroy_all
+    Mention.destroy_all
+    Tweet.destroy_all
+    # Hashtag_tweets.destroy_all
+  end
+end
+
 post '/test/reset/all' do
-  User.destroy_all
-  Hashtag.destroy_all
-  Mention.destroy_all
-  Tweet.destroy_all
-  Hashtag_tweets.destroy_all
+  clear_all
+  recreate_TestUser
 end
 
 
 post '/test/reset/testuser' do
+
   # TODO: DO SOMETHING
+  recreate_TestUser
   # TODO: DO SOMETHING
-  # TODO: DO SOMETHING
+
   puts params
 end
 
@@ -49,6 +73,9 @@ post '/test/reset/standard?' do
       num = -1 # -1 means no limit
     else
       num = Integer(input) # only load n tweets from seed data
+      if num <= 0
+        raise ArgumentError, 'Argument is smaller than zero'
+      end
     end
     # TODO: DO SOMETHING
     # TODO: DO SOMETHING
@@ -79,10 +106,22 @@ post '/test/users/create?' do
   end
 end
 
-# ??? User u is a number?
-post '/test/user' do
+# user u generates t(integer) new fake tweets
+post '/test/user/:user/tweets?' do
   puts params
-  'TODO'.to_json
+  input_user = params[:user] # who
+  input_count = params[:count]
+  begin
+    count = Integer(input_count) # number of fake tweets needed to generate
+    # TODO: DO SOMETHING
+    # TODO: DO SOMETHING
+    # TODO: DO SOMETHING
+    'TODO'.to_json
+  rescue
+    # Wrong input
+    "Nah, input is not valid, \nparams = #{params}".to_json
+  end
+  
 end
 
 
