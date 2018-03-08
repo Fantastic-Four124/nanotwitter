@@ -16,36 +16,57 @@ TESTUSER_NAME = 'testuser'
 TESTUSER_EMAIL = 'testuser@sample.com'
 TESTUSER_PASSWORD = 'password'
 
-helpers do
+def recreate_testuser
+  result = User.new(username: TESTUSER_NAME, password: TESTUSER_PASSWORD).save
+  puts "Recreate testuser -> #{result}"
+end
 
-  def recreate_TestUser()
-    result = User.new(username: TESTUSER_NAME, password: TESTUSER_PASSWORD).save
-    puts "Recreate testuser -> #{result}"
-    
-  end
+# Danger Zone! It will remove everthing in the DB
+def clear_all()
+  User.destroy_all
+  Hashtag.destroy_all
+  Mention.destroy_all
+  Tweet.destroy_all
+  # Hashtag_tweets.destroy_all
+end
 
-  def clear_all()
-    User.destroy_all
-    Hashtag.destroy_all
-    Mention.destroy_all
-    Tweet.destroy_all
-    # Hashtag_tweets.destroy_all
-  end
+# What happen when you break up with someone.... ;(
+def remove_everything_about(name)
+  list_of_activerecords = [
+    Follow.find_by(leader_id: name),
+    Follow.find_by(user_id: name),
+    Mention.find_by(username: name),
+    Tweet.find_by(user_id: name),
+    User.find_by(username: name)
+  ]
+  list_of_activerecords.each { |ar| destroy_and_save(ar) }
+end
+
+# Helper method, for active record object ONLY!
+def destroy_and_save(active_record_object)
+  active_record_object.destroy
+  active_record_object.save
+end
+
+def report_status
+  status = {
+    'number of users': User.count,
+    'number of tweets': Tweet.count,
+    'number of follow': Follow.count,
+    'Id of Test user': TESTUSER_NAME
+  }
+  status
 end
 
 post '/test/reset/all' do
   clear_all
-  recreate_TestUser
+  recreate_testuser
 end
 
-
 post '/test/reset/testuser' do
-
-  # TODO: DO SOMETHING
-  recreate_TestUser
-  # TODO: DO SOMETHING
-
-  puts params
+  remove_everything_about(TESTUSER_NAME)
+  recreate_testuser
+  puts report_status
 end
 
 # Report the current version
@@ -56,11 +77,8 @@ end
 # One page report
 # How many users, follows, and tweets are there. What is the TestUser’s id
 get '/test/status' do
-  # TODO: DO SOMETHING
-  # TODO: DO SOMETHING
-  # TODO: DO SOMETHING
-  puts params
-  'STATUS'.to_json
+  st = report_status
+  st.to_json
 end
 
 # Read from seed

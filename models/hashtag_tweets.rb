@@ -3,5 +3,4 @@ class HashtagTweets < ActiveRecord::Base
   validates :tweet_id,presence:true
   belongs_to :hashtags
   belongs_to :tweets
-
 end
