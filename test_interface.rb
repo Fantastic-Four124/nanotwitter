@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'byebug'
+require 'faker' # fake people showing fake love
 require_relative 'models/user'
 require_relative 'models/hashtag'
 require_relative 'models/mention'
@@ -15,6 +16,10 @@ require_relative './version'
 TESTUSER_NAME = 'testuser'
 TESTUSER_EMAIL = 'testuser@sample.com'
 TESTUSER_PASSWORD = 'password'
+NUMBER_OF_SEED_USERS = 1000
+users_hashtable = Array.new(NUMBER_OF_SEED_USERS + 1) # from user_id to user_name
+users_hashtable[0] = TESTUSER_NAME
+
 
 def recreate_testuser
   result = User.new(username: TESTUSER_NAME, password: TESTUSER_PASSWORD).save
@@ -58,6 +63,19 @@ def report_status
   status
 end
 
+def generate_code(number)
+  charset = Array('A'..'Z') + Array('a'..'z')
+  Array.new(number) { charset.sample }.join
+end
+
+def get_fake_password
+  str = [true, false].sample ? Faker::Fallout.character : ''
+  str = str + [true, false].sample ? Faker::Food.dish  : ''
+  str = str + [true, false].sample ? Faker::Date.birthday(18, 65) : ''
+  str = str + [true, false].sample ? Faker::Kpop.boy_bands : ''
+  str.gsub(/\s/,'')
+end
+
 post '/test/reset/all' do
   clear_all
   recreate_testuser
@@ -95,13 +113,51 @@ post '/test/reset/standard?' do
         raise ArgumentError, 'Argument is smaller than zero'
       end
     end
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
-    "GOOD: #{num}".to_json
+
+    
+
+    # make all new users
+    File.open('seeds/users.csv', 'r').each do |line|
+      str = line.split(',')
+      id = Integer(str[0]) # ID provided in seed, useless for our implementation for now
+      name = str[1]
+      users_hashtable[id] = name
+      if !User.new(username: name, password: get_fake_password).save 
+        puts "Entering user: #{name}, id: #{id} failed."
+      end
+    end
+    # make all new users
+
+    # post all tweets
+    File.open('seeds/tweets.csv', 'r').each do |line|
+      if num > 0
+        break if num == 0 # enforce a limit if there is one
+      end
+      str = line.split(',')
+      id = Integer(str[0]) # ID provided in seed, useless for our implementation for now
+      text = str[1]
+      time_stamp = str[2] # We dont support this for now !!IMPORTANT!!
+      if !Tweet.new(user: users_hashtable[id], message: text).save 
+        puts "Entering tweet: #{text}, by: #{id} #{users_hashtable[id]} failed."
+      end
+      num -= 1
+    end
+    # post all tweets
+
+    # follow
+    File.open('seeds/follows.csv', 'r').each do |line|
+      str = line.split(',')
+      id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
+      id2 = Integer(str[1])
+      follower_follow_leader(users_hashtable[id1], users_hashtable[id2])
+    end
+    # follow
+
+    result = { 'Result': 'GOOD!', 'status': report_status }
+    result.to_json
   rescue
     # Wrong input
-    "Nah, input is not valid, \nparams = #{params}".to_json
+    "Something wrong, \nparams = #{params}".to_json
   end
 end
 
@@ -114,10 +170,44 @@ post '/test/users/create?' do
   begin
     count = Integer(input_count)
     tweet = Integer(input_tweet)
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
-    "GOOD:\n\tcount: #{count}, tweet: #{tweet}".to_json
+    # Making fake ppl
+    while count > 0
+      fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
+      if !User.new(username: fake_ppl, password: get_fake_password).save 
+        puts "Enter fake user: #{fake_ppl} failed."
+      end
+      users_hashtable << fake_ppl
+    end
+    # Making of fake ppl
+
+    # Fake tweets
+    while count > 0
+      fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
+      if !User.new(username: fake_ppl, password: get_fake_password).save 
+        puts "Enter fake user: #{fake_ppl} failed."
+      end
+      users_hashtable << fake_ppl
+      count -= 1
+    end 
+
+    # Fake tweets
+    while tweet.positive?
+      txts = [
+        Faker::Pokemon.name + 'uses' + Faker::Pokemon.move,
+        Faker::SiliconValley.quote,
+        Faker::SiliconValley.motto,
+        Faker::ProgrammingLanguage.name + 'is the best!',
+        'I went to ' + Faker::University.name + '.',
+        'Lets GO! ' + Faker::Team.name
+      ]
+      if !Tweet.new(user: users_hashtable.sample, message: txts.sample).save 
+        puts 'Fake tweet Failed.'
+      end
+      tweet -= 1
+    end
+    # Fake tweets
+
+    "GOOD:\n\tFaking #{count} users and #{tweet} tweets".to_json
   rescue
     # Wrong input
     "Nah, input is not valid, \nparams = #{params}".to_json

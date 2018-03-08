@@ -228,7 +228,7 @@ end
 post '/tweets/new' do
   usr = session[:user_hash]
   msg = params[:tweet]['message']
-  new_tweet = Tweet.new(user: usr, message: msg)
+  new_tweet = Tweet.new(user: usr, message: msg) # need to support for time stamp
   if new_tweet.save
     redirect '/'
   else
