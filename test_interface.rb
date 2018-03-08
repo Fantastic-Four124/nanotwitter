@@ -13,16 +13,30 @@ require_relative './version'
 # email: testuser@sample.com
 # password: “password”
 
+# /test/reset/all                   OJBK
+# /test/reset/testuser              OJBK
+# /test/version                     OJBK
+# /test/status                      OJBK
+# /test/reset/standard?             ?
+# /test/users/create?               ? 
+# /test/user/u/tweets?count=t       X
+# /test/user/u/follow?count=n       X
+# /test/user/follow?count=n         X
+
+### Vars
 TESTUSER_NAME = 'testuser'
 TESTUSER_EMAIL = 'testuser@sample.com'
 TESTUSER_PASSWORD = 'password'
 NUMBER_OF_SEED_USERS = 1000
+TESTUSER_ID = 3456
+RETRY_LIMIT = 15
 users_hashtable = Array.new(NUMBER_OF_SEED_USERS + 1) # from user_id to user_name
 users_hashtable[0] = TESTUSER_NAME
+### Vars
 
-
+### Helper Methods
 def recreate_testuser
-  result = User.new(username: TESTUSER_NAME, password: TESTUSER_PASSWORD).save
+  result = User.new(id: TESTUSER_ID, username: TESTUSER_NAME, password: TESTUSER_PASSWORD, email:TESTUSER_EMAIL).save
   puts "Recreate testuser -> #{result}"
 end
 
@@ -41,7 +55,7 @@ def remove_everything_about(name)
     Follow.find_by(leader_id: name),
     Follow.find_by(user_id: name),
     Mention.find_by(username: name),
-    Tweet.find_by(user_id: name),
+    Tweet.find_by(username: name),
     User.find_by(username: name)
   ]
   list_of_activerecords.each { |ar| destroy_and_save(ar) }
@@ -49,6 +63,7 @@ end
 
 # Helper method, for active record object ONLY!
 def destroy_and_save(active_record_object)
+  return if active_record_object == nil
   active_record_object.destroy
   active_record_object.save
 end
@@ -58,7 +73,7 @@ def report_status
     'number of users': User.count,
     'number of tweets': Tweet.count,
     'number of follow': Follow.count,
-    'Id of Test user': TESTUSER_NAME
+    'Id of Test user': TESTUSER_ID
   }
   status
 end
@@ -70,21 +85,22 @@ end
 
 def get_fake_password
   str = [true, false].sample ? Faker::Fallout.character : ''
-  str = str + [true, false].sample ? Faker::Food.dish  : ''
-  str = str + [true, false].sample ? Faker::Date.birthday(18, 65) : ''
-  str = str + [true, false].sample ? Faker::Kpop.boy_bands : ''
-  str.gsub(/\s/,'')
+  str += str + ([true, false].sample ? Faker::Food.dish  : '')
+  str += ([true, false].sample ? Faker::Kpop.boy_bands : '')
+  str.gsub(/\s/, '')
 end
+### Helper Methods
 
 post '/test/reset/all' do
   clear_all
   recreate_testuser
+  report_status.to_json
 end
 
 post '/test/reset/testuser' do
   remove_everything_about(TESTUSER_NAME)
   recreate_testuser
-  puts report_status
+  report_status.to_json
 end
 
 # Report the current version
@@ -104,61 +120,73 @@ end
 post '/test/reset/standard?' do
   puts params
   input = params[:tweets]
-  begin
-    if params.length == 1
-      num = -1 # -1 means no limit
-    else
-      num = Integer(input) # only load n tweets from seed data
-      if num <= 0
-        raise ArgumentError, 'Argument is smaller than zero'
-      end
+  clear_all
+
+  if params.length == 1
+    num = -1 # -1 means no limit
+  else
+    num = Integer(input) # only load n tweets from seed data
+    if num <= 0
+      raise ArgumentError, 'Argument is smaller than zero'
     end
-
-    
-
-    # make all new users
-    File.open('seeds/users.csv', 'r').each do |line|
-      str = line.split(',')
-      id = Integer(str[0]) # ID provided in seed, useless for our implementation for now
-      name = str[1]
-      users_hashtable[id] = name
-      if !User.new(username: name, password: get_fake_password).save 
-        puts "Entering user: #{name}, id: #{id} failed."
-      end
-    end
-    # make all new users
-
-    # post all tweets
-    File.open('seeds/tweets.csv', 'r').each do |line|
-      if num > 0
-        break if num == 0 # enforce a limit if there is one
-      end
-      str = line.split(',')
-      id = Integer(str[0]) # ID provided in seed, useless for our implementation for now
-      text = str[1]
-      time_stamp = str[2] # We dont support this for now !!IMPORTANT!!
-      if !Tweet.new(user: users_hashtable[id], message: text).save 
-        puts "Entering tweet: #{text}, by: #{id} #{users_hashtable[id]} failed."
-      end
-      num -= 1
-    end
-    # post all tweets
-
-    # follow
-    File.open('seeds/follows.csv', 'r').each do |line|
-      str = line.split(',')
-      id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
-      id2 = Integer(str[1])
-      follower_follow_leader(users_hashtable[id1], users_hashtable[id2])
-    end
-    # follow
-
-    result = { 'Result': 'GOOD!', 'status': report_status }
-    result.to_json
-  rescue
-    # Wrong input
-    "Something wrong, \nparams = #{params}".to_json
   end
+
+  # make all new users
+  File.open('./seeds/users.csv', 'r').each do |line|
+    str = line.split(',')
+    uid = Integer(str[0]) # ID provided in seed, useless for our implementation for now
+    name = str[1].gsub(/\n/, "")
+    name = name.gsub(/\r/, "")
+    pw = get_fake_password
+    users_hashtable[uid] = name
+    i = RETRY_LIMIT
+    while !User.new(id: uid, username: name, password: pw).save 
+      break if i.negative?
+      puts "Entering user: #{name}, id: #{uid} failed, and retry."
+      i -= 1
+    end
+  end
+  # make all new users
+  puts 'users done'
+
+   # follow
+   File.open('./seeds/follows.csv', 'r').each do |line|
+    str = line.split(',')
+    id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
+    id2 = Integer(str[1])
+    puts "#{id1} fo #{id2}"
+    relation = Follow.new
+    relation.user_id = id1
+    relation.leader_id = id2
+    relation.follow_date = Time.now
+    relation.save
+  end
+  # follow
+  puts 'following done'
+  
+  # post all tweets
+  File.open('./seeds/tweets.csv', 'r').each do |line|
+    break if num == 0 # enforce a limit if there is one
+    
+    str = line.split(',')
+    id = Integer(str[0])
+    text = str[1]
+    time_stamp = str[2] 
+    i = RETRY_LIMIT
+    while !Tweet.new(username: users_hashtable[id], message: text, timestamp: time_stamp).save 
+      break if i.negative?
+      puts "Entering tweet: #{text}, by: #{id} #{users_hashtable[id]} failed and retry."
+      i -= 1
+    end
+    num -= 1
+  end
+  # post all tweets
+
+  recreate_testuser
+
+  result = { 'Result': 'GOOD!', 'status': report_status }
+  result.to_json
+
 end
 
 # create u (integer) fake Users using faker. Defaults to 1.
@@ -214,22 +242,21 @@ post '/test/users/create?' do
   end
 end
 
-# user u generates t(integer) new fake tweets
-post '/test/user/:user/tweets?' do
-  puts params
-  input_user = params[:user] # who
-  input_count = params[:count]
-  begin
-    count = Integer(input_count) # number of fake tweets needed to generate
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
-    'TODO'.to_json
-  rescue
-    # Wrong input
-    "Nah, input is not valid, \nparams = #{params}".to_json
-  end
-  
-end
+# # user u generates t(integer) new fake tweets
+# post '/test/user/:user/tweets?' do
+#   puts params
+#   input_user = params[:user] # who
+#   input_count = params[:count]
+#   begin
+#     count = Integer(input_count) # number of fake tweets needed to generate
+#     # TODO: DO SOMETHING
+#     # TODO: DO SOMETHING
+#     # TODO: DO SOMETHING
+#     'TODO'.to_json
+#   rescue
+#     # Wrong input
+#     "Nah, input is not valid, \nparams = #{params}".to_json
+#   end
+# end
 
 

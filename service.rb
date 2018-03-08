@@ -43,8 +43,10 @@ def follower_follow_leader(follower_id,leader_id)
       follower = User.find(follower_id)
       leader = User.find(leader_id)
 
-      follower.number_of_leaders += 1
-      leader.number_of_followers += 1
+      return relation if follower.nil? || leader.nil?
+
+      follower.Number_of_leaders += 1
+      leader.Number_of_followers += 1
       follower.save
       leader.save
 
@@ -60,8 +62,8 @@ def follower_unfollow_leader(follower_id,leader_id)
       follower = User.find(follower_id)
       leader = User.find(leader_id)
 
-      follower.number_of_leaders -= 1
-      leader.number_of_followers -= 1
+      follower.Number_of_leaders -= 1
+      leader.Number_of_followers -= 1
       follower.save
       leader.save
 
@@ -228,7 +230,7 @@ end
 post '/tweets/new' do
   usr = session[:user_hash]
   msg = params[:tweet]['message']
-  new_tweet = Tweet.new(user: usr, message: msg) # need to support for time stamp
+  new_tweet = Tweet.new(user: usr, message: msg)
   if new_tweet.save
     redirect '/'
   else
