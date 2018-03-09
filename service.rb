@@ -68,8 +68,8 @@ def follower_unfollow_leader(follower_id,leader_id)
     end
 end
 
-get '/loaderio-1541f51ead65ae3319ad8207fee20f8d/' do
-  send_file '/loaderio-1541f51ead65ae3319ad8207fee20f8d.txt'
+get '/loaderio-1541f51ead65ae3319ad8207fee20f8d.txt' do
+  send_file 'loaderio-1541f51ead65ae3319ad8207fee20f8d.txt'
 end
 
 get '/login' do
