@@ -68,7 +68,7 @@ def follower_unfollow_leader(follower_id,leader_id)
     end
 end
 
-get '/loaderio-1541f51ead65ae3319ad8207fee20f8d' do
+get '/loaderio-1541f51ead65ae3319ad8207fee20f8d/' do
   erb :loader
 end
 
