@@ -13,6 +13,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (8.0.0)
+    bcrypt (3.1.11)
     byebug (10.0.0)
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
@@ -54,6 +55,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  bcrypt
   byebug
   pg
   pry-byebug
@@ -63,6 +65,9 @@ DEPENDENCIES
   sinatra
   sinatra-activerecord
   time_difference
+
+RUBY VERSION
+   ruby 2.5.0p0
 
 BUNDLED WITH
    1.16.1

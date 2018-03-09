@@ -78,12 +78,12 @@ get '/login' do
 end
 
 post '/login' do
-  user = User.find_by(username: params['username'], password: params['password'])
-  if !user.nil?
+  @user = User.find_by_username(params['username'])
+  if @user.password == params['password']
     session[:username] = params['username']
     session[:password] = params['password']
-    session[:user_id] = user.id
-    session[:user_hash] = user
+    session[:user_id] = @user.id
+    session[:user_hash] = @user
     redirect '/'
   else
     @texts = 'Wrong password or username.'
@@ -121,7 +121,8 @@ end
 post '/user/register' do
   username = params[:register]['username']
 	password = params[:register]['password']
-  @user = User.new(username: username,password: password)
+  @user = User.new(username: username)
+  @user.password = password
   @user.number_of_followers = 0
   @user.number_of_leaders = 0
   if @user.save
