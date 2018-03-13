@@ -43,8 +43,6 @@ def follower_follow_leader(follower_id,leader_id)
       follower = User.find(follower_id)
       leader = User.find(leader_id)
 
-      return relation if follower.nil? || leader.nil?
-
       follower.Number_of_leaders += 1
       leader.Number_of_followers += 1
       follower.save

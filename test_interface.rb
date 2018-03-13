@@ -195,68 +195,67 @@ end
 post '/test/users/create?' do
   input_count = params[:count]
   input_tweet = params[:tweets]
+  count = Integer(input_count)
+  tweet = Integer(input_tweet)
+  # Making fake ppl
+  # while count > 0
+  #   fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
+  #   if !User.new(username: fake_ppl, password: get_fake_password).save 
+  #     puts "Enter fake user: #{fake_ppl} failed."
+  #   end
+  #   users_hashtable << fake_ppl
+  # end
+  # Making of fake ppl
+  puts 'Done faking users'
+  # Fake tweets
+  while count.positive?
+    fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
+    if !User.new(username: fake_ppl, password: get_fake_password).save 
+      puts "Enter fake user: #{fake_ppl} failed."
+    end
+    users_hashtable << fake_ppl
+    count -= 1
+  end
+  # Fake tweets
+  puts 'Done faking users'
+  while tweet.positive?
+    txts = [
+      Faker::Pokemon.name + 'uses' + Faker::Pokemon.move,
+      Faker::SiliconValley.quote,
+      Faker::SiliconValley.motto,
+      Faker::ProgrammingLanguage.name + 'is the best!',
+      'I went to ' + Faker::University.name + '.',
+      'Lets GO! ' + Faker::Team.name
+    ]
+    usr = users_hashtable.sample
+    msg = txts.sample
+    puts "#{usr}\n#{msg}"
+    if !Tweet.new(username: usr, message: msg).save 
+      puts 'Fake tweet Failed.'
+    end
+    tweet -= 1
+  end
+  puts 'Done faking tweets'
+  # Fake tweets
+
+  "GOOD".to_json
+end
+
+# user u generates t(integer) new fake tweets
+post '/test/user/:user/tweets?' do
+  puts params
+  input_user = params[:user] # who
+  input_count = params[:count]
   begin
-    count = Integer(input_count)
-    tweet = Integer(input_tweet)
-    # Making fake ppl
-    while count > 0
-      fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
-      if !User.new(username: fake_ppl, password: get_fake_password).save 
-        puts "Enter fake user: #{fake_ppl} failed."
-      end
-      users_hashtable << fake_ppl
-    end
-    # Making of fake ppl
-
-    # Fake tweets
-    while count > 0
-      fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
-      if !User.new(username: fake_ppl, password: get_fake_password).save 
-        puts "Enter fake user: #{fake_ppl} failed."
-      end
-      users_hashtable << fake_ppl
-      count -= 1
-    end 
-
-    # Fake tweets
-    while tweet.positive?
-      txts = [
-        Faker::Pokemon.name + 'uses' + Faker::Pokemon.move,
-        Faker::SiliconValley.quote,
-        Faker::SiliconValley.motto,
-        Faker::ProgrammingLanguage.name + 'is the best!',
-        'I went to ' + Faker::University.name + '.',
-        'Lets GO! ' + Faker::Team.name
-      ]
-      if !Tweet.new(user: users_hashtable.sample, message: txts.sample).save 
-        puts 'Fake tweet Failed.'
-      end
-      tweet -= 1
-    end
-    # Fake tweets
-
-    "GOOD:\n\tFaking #{count} users and #{tweet} tweets".to_json
+    count = Integer(input_count) # number of fake tweets needed to generate
+    # TODO: DO SOMETHING
+    # TODO: DO SOMETHING
+    # TODO: DO SOMETHING
+    'TODO'.to_json
   rescue
     # Wrong input
     "Nah, input is not valid, \nparams = #{params}".to_json
   end
 end
-
-# # user u generates t(integer) new fake tweets
-# post '/test/user/:user/tweets?' do
-#   puts params
-#   input_user = params[:user] # who
-#   input_count = params[:count]
-#   begin
-#     count = Integer(input_count) # number of fake tweets needed to generate
-#     # TODO: DO SOMETHING
-#     # TODO: DO SOMETHING
-#     # TODO: DO SOMETHING
-#     'TODO'.to_json
-#   rescue
-#     # Wrong input
-#     "Nah, input is not valid, \nparams = #{params}".to_json
-#   end
-# end
 
 
