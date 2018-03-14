@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(version: 20180216154056) do
     t.integer "user_id"
     t.integer "leader_id"
     t.datetime "follow_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["leader_id"], name: "index_follows_on_leader_id"
   end
 
@@ -39,6 +41,7 @@ ActiveRecord::Schema.define(version: 20180216154056) do
   create_table "tweets", force: :cascade do |t|
     t.string "message"
     t.integer "user_id"
+    t.datetime "timestamps"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -46,7 +49,7 @@ ActiveRecord::Schema.define(version: 20180216154056) do
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.text "email"
-    t.string "password"
+    t.string "password_hash"
     t.integer "number_of_followers"
     t.integer "number_of_leaders"
   end
