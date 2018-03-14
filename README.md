@@ -33,10 +33,25 @@ The following was added to version 0.2:
 The following was added to version 0.3:
 - [x] Codeship account created for nanoTwitter project. It has also been set to autodeploy to Heroku whenever a team member pushes to GitHub. *(Performed by Cameron Cho)*
 
-- [ ] Testing suite constructed with MiniTest.
+- [x] Testing suite constructed with MiniTest. *(Performed by Alex Hu)*
 
-- [ ] Testing interface constructed.
+- [x] Testing interface constructed. *(Performed by Alex Hu.)*
 
-- [ ] Seed data for testing created.
+- [x] Seed data for testing retrieved. *(Performed by Tom Willkens and Cameron Cho)*
 
-test
+- [x] Work on using GraphQL started. *(Performed by Tom Willkens)*
+
+- [x] Study on RabbitMQ and Redis started. *(Performed by Zhengyang Zhou)*
+
+- [x] Study and implementation of MongoDB and Mongoid started. *(Performed by Cameron Cho)*
+
+
+### Version 0.4
+The following was added to version 0.4:
+ - [x] An account to loader.io was created and the pilot tests were run.
+
+ - [ ] loader.io was utilized to sniff out bugs in the code.
+
+ - [ ] Test driven development was employed to complete the testing interface.
+
+ - [ ] All members decided to log into nanoTwitter to start Tweeting and test it manually.
