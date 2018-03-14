@@ -4,6 +4,7 @@ class CreateFollow < ActiveRecord::Migration[5.1]
       t.integer :user_id
       t.integer :leader_id
       t.datetime   :follow_date
+      t.timestamps
 
       t.index(:leader_id)
 
