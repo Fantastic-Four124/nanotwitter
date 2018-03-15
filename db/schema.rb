@@ -15,15 +15,12 @@ ActiveRecord::Schema.define(version: 20180216154056) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "events", force: :cascade do |t|
-    t.string "name"
-    t.date "date"
-  end
-
   create_table "follows", force: :cascade do |t|
     t.integer "user_id"
     t.integer "leader_id"
     t.datetime "follow_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["leader_id"], name: "index_follows_on_leader_id"
   end
 
@@ -41,27 +38,20 @@ ActiveRecord::Schema.define(version: 20180216154056) do
     t.integer "tweet_id"
   end
 
-  create_table "persons", force: :cascade do |t|
-    t.string "name"
-    t.date "bday"
-    t.string "sex"
-    t.string "zipcode"
-  end
-
   create_table "tweets", force: :cascade do |t|
     t.string "message"
-    t.string "username"
-    t.date "timestamp"
+    t.integer "user_id"
+    t.datetime "timestamps"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "last_name"
-    t.string "first_name"
     t.string "username"
     t.text "email"
-    t.string "password"
-    t.integer "Number_of_followers"
-    t.integer "Number_of_leaders"
+    t.string "password_hash"
+    t.integer "number_of_followers"
+    t.integer "number_of_leaders"
   end
 
 end

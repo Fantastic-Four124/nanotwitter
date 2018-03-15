@@ -17,7 +17,7 @@ require_relative './version'
 # /test/reset/testuser              OJBK
 # /test/version                     OJBK
 # /test/status                      OJBK
-# /test/reset/standard?             ?
+# /test/reset/standard?             ojbk
 # /test/users/create?               ? 
 # /test/user/u/tweets?count=t       X
 # /test/user/u/follow?count=n       X
@@ -28,10 +28,9 @@ TESTUSER_NAME = 'testuser'
 TESTUSER_EMAIL = 'testuser@sample.com'
 TESTUSER_PASSWORD = 'password'
 NUMBER_OF_SEED_USERS = 1000
-TESTUSER_ID = 3456
+TESTUSER_ID = 3456 # The test user will always have 3456
 RETRY_LIMIT = 15
-users_hashtable = Array.new(NUMBER_OF_SEED_USERS + 1) # from user_id to user_name
-users_hashtable[0] = TESTUSER_NAME
+
 ### Vars
 
 ### Helper Methods
@@ -50,13 +49,13 @@ def clear_all()
 end
 
 # What happen when you break up with someone.... ;(
-def remove_everything_about(name)
+def remove_everything_about_testuser
   list_of_activerecords = [
-    Follow.find_by(leader_id: name),
-    Follow.find_by(user_id: name),
-    Mention.find_by(username: name),
-    Tweet.find_by(username: name),
-    User.find_by(username: name)
+    Follow.find_by(leader_id: TESTUSER_ID),
+    Follow.find_by(user_id: TESTUSER_ID),
+    Mention.find_by(username: TESTUSER_NAME),
+    Tweet.find_by(user_id: TESTUSER_ID),
+    User.find_by(username: TESTUSER_NAME)
   ]
   list_of_activerecords.each { |ar| destroy_and_save(ar) }
 end
@@ -98,7 +97,7 @@ post '/test/reset/all' do
 end
 
 post '/test/reset/testuser' do
-  remove_everything_about(TESTUSER_NAME)
+  remove_everything_about_testuser
   recreate_testuser
   report_status.to_json
 end
@@ -130,6 +129,8 @@ post '/test/reset/standard?' do
       raise ArgumentError, 'Argument is smaller than zero'
     end
   end
+  users_hashtable = Array.new(NUMBER_OF_SEED_USERS + 1) # from user_id to user_name
+  users_hashtable[0] = TESTUSER_NAME
 
   # make all new users
   File.open('./seeds/users.csv', 'r').each do |line|
@@ -155,11 +156,7 @@ post '/test/reset/standard?' do
     id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
     id2 = Integer(str[1])
     puts "#{id1} fo #{id2}"
-    relation = Follow.new
-    relation.user_id = id1
-    relation.leader_id = id2
-    relation.follow_date = Time.now
-    relation.save
+    follower_follow_leader(id1, id2)
   end
   # follow
   puts 'following done'
@@ -171,9 +168,9 @@ post '/test/reset/standard?' do
     str = line.split(',')
     id = Integer(str[0])
     text = str[1]
-    time_stamp = str[2] 
+    time_stamp = str[2]
     i = RETRY_LIMIT
-    while !Tweet.new(username: users_hashtable[id], message: text, timestamp: time_stamp).save 
+    while !Tweet.new(user_id: id, message: text, timestamps: time_stamp).save 
       break if i.negative?
       puts "Entering tweet: #{text}, by: #{id} #{users_hashtable[id]} failed and retry."
       i -= 1
@@ -208,17 +205,25 @@ post '/test/users/create?' do
   # Making of fake ppl
   puts 'Done faking users'
   # Fake tweets
+  users_ids = Array.new(count)
   while count.positive?
     fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
-    if !User.new(username: fake_ppl, password: get_fake_password).save 
-      puts "Enter fake user: #{fake_ppl} failed."
+    neo = User.new(username: fake_ppl, password: get_fake_password)
+    if neo.save
+      users_ids[count - 1] = neo.id
+      puts neo.id
     end
-    users_hashtable << fake_ppl
     count -= 1
   end
   # Fake tweets
   puts 'Done faking users'
-  while tweet.positive?
+  make_fake_tweets(users_ids.sample, tweet)
+  # Fake tweets
+  "GOOD".to_json
+end
+
+def make_fake_tweets(user_id, num)
+  while num.positive?
     txts = [
       Faker::Pokemon.name + 'uses' + Faker::Pokemon.move,
       Faker::SiliconValley.quote,
@@ -227,18 +232,14 @@ post '/test/users/create?' do
       'I went to ' + Faker::University.name + '.',
       'Lets GO! ' + Faker::Team.name
     ]
-    usr = users_hashtable.sample
     msg = txts.sample
-    puts "#{usr}\n#{msg}"
-    if !Tweet.new(username: usr, message: msg).save 
+    puts "Faking tweet -> #{user_id}: #{msg}"
+    if !Tweet.new(user_id: user_id, message: msg).save 
       puts 'Fake tweet Failed.'
     end
-    tweet -= 1
+    num -= 1
   end
   puts 'Done faking tweets'
-  # Fake tweets
-
-  "GOOD".to_json
 end
 
 # user u generates t(integer) new fake tweets
@@ -248,9 +249,9 @@ post '/test/user/:user/tweets?' do
   input_count = params[:count]
   begin
     count = Integer(input_count) # number of fake tweets needed to generate
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
-    # TODO: DO SOMETHING
+
+
+
     'TODO'.to_json
   rescue
     # Wrong input
