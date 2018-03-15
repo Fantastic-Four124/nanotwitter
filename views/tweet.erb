@@ -6,7 +6,23 @@
   </div>
   <div class="row">
     <div class="col-sm-12" style="text-align: left">
-      <span class="tweet-message"><%= @tweet.message %></span>
+      <span class="tweet-message">
+            <%= @tweet.message %>
+            <% if !Mention.find_by(tweet_id: @tweet.id).nil? %>
+                <% mentions = Mention.where(tweet_id: @tweet.id) %>
+                <br>
+                <% mentions.each do |mention| %>
+                  <a href="/user/<%= User.find_by_username(mention.username).id %>">@<%= mention.username %></a>
+                <% end %>
+            <% end %>
+            <% if !HashtagTweet.find_by(tweet_id: @tweet.id).nil? %>
+                <% hashtags = HashtagTweet.where(tweet_id: @tweet.id) %>
+                <br>
+                <% hashtags.each do |tag| %>
+                  <a href="/hashtag/<%= tag.hashtag_id %>">#<%= tag.hashtag.tag %></a>
+                <% end %>
+            <% end %>
+       </span>
     </div>
   </div>
 </div>
