@@ -43,8 +43,11 @@ def follower_follow_leader(follower_id,leader_id)
       follower = User.find(follower_id)
       leader = User.find(leader_id)
 
-      follower.Number_of_leaders += 1
-      leader.Number_of_followers += 1
+      follower.number_of_leaders = 0 if follower.number_of_leaders == nil
+      leader.number_of_followers = 0 if leader.number_of_followers == nil
+
+      follower.number_of_leaders += 1
+      leader.number_of_followers += 1
       follower.save
       leader.save
 
@@ -60,8 +63,10 @@ def follower_unfollow_leader(follower_id,leader_id)
       follower = User.find(follower_id)
       leader = User.find(leader_id)
 
-      follower.Number_of_leaders -= 1
-      leader.Number_of_followers -= 1
+      return if follower.number_of_leaders.nil? || leader.number_of_followers.nil?
+
+      follower.number_of_leaders -= 1
+      leader.number_of_followers -= 1
       follower.save
       leader.save
 
