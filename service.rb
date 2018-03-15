@@ -82,7 +82,7 @@ end
 
 post '/login' do
   @user = User.find_by_username(params['username'])
-  if @user.password == params['password']
+  if !@user.nil? && @user.password == params['password']
     session[:username] = params['username']
     session[:password] = params['password']
     session[:user_id] = @user.id
