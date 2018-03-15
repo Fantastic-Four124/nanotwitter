@@ -1,7 +1,7 @@
-class HashtagTweets < ActiveRecord::Base
+class HashtagTweet < ActiveRecord::Base
   validates :hashtag_id,presence:true
   validates :tweet_id,presence:true
-  belongs_to :hashtags
-  belongs_to :tweets
+  belongs_to :hashtag
+  belongs_to :tweet
 
 end
