@@ -168,7 +168,7 @@ post '/test/reset/standard?' do
   users_hashtable[0] = TESTUSER_NAME
 
   # make all new users
-  File.open('./seeds/usersMINI.csv', 'r').each do |line|
+  File.open('./seeds/users.csv', 'r').each do |line|
     str = line.split(',')
     uid = Integer(str[0]) # ID provided in seed, useless for our implementation for now
     name = str[1].gsub(/\n/, "")
@@ -186,7 +186,7 @@ post '/test/reset/standard?' do
   puts 'users done'
 
    # follow
-   File.open('./seeds/followsMINI.csv', 'r').each do |line|
+   File.open('./seeds/follows.csv', 'r').each do |line|
     str = line.split(',')
     id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
     id2 = Integer(str[1])
@@ -197,7 +197,7 @@ post '/test/reset/standard?' do
   puts 'following done'
   
   # post all tweets
-  File.open('./seeds/tweetsMINI.csv', 'r').each do |line|
+  File.open('./seeds/tweets.csv', 'r').each do |line|
     break if num == 0 # enforce a limit if there is one
     str = line.split(',')
     id = Integer(str[0])
