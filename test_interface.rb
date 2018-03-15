@@ -256,6 +256,7 @@ end
 
 
 # user u generates t(integer) new fake tweets
+# /test/user/22/follow?count=10
 post '/test/user/:user/tweets?' do
   puts params
   input_user = params[:user] # who
