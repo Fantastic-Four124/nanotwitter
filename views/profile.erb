@@ -2,20 +2,20 @@
   <div class="profile position-fixed" id="profile-<%= @curr_user.id %>">
     <p>User: <%= @curr_user.username %></p>
     <!--THIS NEEDS FOLLOWERS/LEADERS TO BE IMPLEMENTED -->
-    <p>Leaders: <a href=<%= "/user/#{@curr_user.id}/leaders" %>><%= @curr_user.number_of_leaders %></a></p>
-    <p>Followers: <a href=<%= "/user/#{@curr_user.id}/followers" %>><%= @curr_user.number_of_followers %></a></p>
-    <p><a href=<%= "/user/#{@curr_user.id}/timeline" %>>Timeline</a></p>
+    <p>Leaders: <a href=<%= "#{ErbConstants::ERBCON}/user/#{@curr_user.id}/leaders" %>><%= @curr_user.number_of_leaders %></a></p>
+    <p>Followers: <a href=<%= "#{ErbConstants::ERBCON}/user/#{@curr_user.id}/followers" %>><%= @curr_user.number_of_followers %></a></p>
+    <p><a href=<%= "#{ErbConstants::ERBCON}/user/#{@curr_user.id}/timeline" %>>Timeline</a></p>
     <% if @curr_user.username != session[:username] %>
       <!-- if not following -->
       <% if Follow.find_by(user_id: session[:user_id], leader_id: @curr_user.id).nil? %>
-        <form method="POST" action="/user/<%= @curr_user.id %>/follow" class="inline">
+        <form method="POST" action="<%= ErbConstants::ERBCON %>/user/<%= @curr_user.id %>/follow" class="inline">
           <input type="hidden" name="follow[user_id]" value= "<%= @curr_user.id %>">
           <button type="submit" name="follow" class="btn btn-primary">
             Follow
           </button>
         </form>
       <% else %>
-        <form method="POST" action="/user/<%= @curr_user.id %>/unfollow" class="inline">
+        <form method="POST" action="<%= ErbConstants::ERBCON %>/user/<%= @curr_user.id %>/unfollow" class="inline">
           <input type="hidden" name="unfollow[user_id]" value="<%= @curr_user.id %>">
           <button type="submit" name="unfollow" class="btn btn-primary">
             Unfollow
