@@ -74,13 +74,24 @@ end
 # All other pages need to have these session objects checked.
 get PREFIX + '/' do
   if protected!
-    #@curr_user = session[:user_hash]
-    # The number will be dynamically changing. We should think about how to change
     @curr_user = User.find(session[:user_id])
-    tweets = Tweet.where("user_id = '#{session[:user_id]}'").sort_by &:created_at
+    leader_list = @curr_user.leaders
+    tweets = []
+    leader_list.each do |leader|
+      subtweets = Tweet.where("user_id = '#{leader.id}'")
+      tweets.push(*subtweets)
+    end
+    tweets.sort_by &:created_at
     tweets.reverse!
     @tweets = tweets[0..49]
     erb :logged_root
+    #@curr_user = session[:user_hash]
+    # The number will be dynamically changing. We should think about how to change
+    # @curr_user = User.find(session[:user_id])
+    # tweets = Tweet.where("user_id = '#{session[:user_id]}'").sort_by &:created_at
+    # tweets.reverse!
+    # @tweets = tweets[0..49]
+    # erb :logged_root
   else
     tweets = Tweet.all.sort_by &:created_at
     tweets.reverse!
