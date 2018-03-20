@@ -59,6 +59,7 @@ end
 
 post PREFIX + '/login' do
   @user = User.find_by_username(params['username'])
+  byebug
   if !@user.nil? && @user.password == params['password']
     session[:username] = params['username']
     session[:password] = params['password']
