@@ -50,9 +50,9 @@ The following was added to version 0.3:
 The following was added to version 0.4:
  - [x] An account to loader.io was created and the pilot tests were run. *(Performed by Cameron Cho)*
 
- - [x] Added more tests to flesh out interface and Minitest suite. *(Performed by Tom Willkens and Zhengyang Jo)*
+ - [x] Added more tests to flesh out interface and Minitest suite. *(Performed by Tom Willkens and Zhengyang Zhou)*
 
- - [x] Test driven development was employed to complete the testing interface. *(Performed by Alex Wu)*
+ - [x] Test driven development was employed to complete the testing interface. *(Performed by Alex Hu)*
 
  - [x] All members decided to log into nanoTwitter to start Tweeting and test it manually. *(Performed by everyone)*
 
