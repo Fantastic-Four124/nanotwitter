@@ -1,6 +1,6 @@
 development:
   adapter: postgresql
-  encoding: unicode #latin1 #unicode
+  encoding: latin1 #unicode
   database: development
   pool: 2
 
