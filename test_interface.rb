@@ -6,6 +6,7 @@ require_relative 'models/user'
 require_relative 'models/hashtag'
 require_relative 'models/mention'
 require_relative 'models/tweet'
+require_relative 'models/follow'
 require_relative 'models/hashtag_tweets'
 require_relative './version'
 
@@ -18,7 +19,7 @@ require_relative './version'
 # /test/version                     OJBK
 # /test/status                      OJBK
 # /test/reset/standard?             ojbk
-# /test/users/create?               ? 
+# /test/users/create?               ?
 # /test/user/u/tweets?count=t       X
 # /test/user/u/follow?count=n       X
 # /test/user/follow?count=n         X
@@ -92,7 +93,7 @@ def get_fake_password
 end
 
 # Calling this will prevent activerecord from assigning the same id (which violates constrain)
-def reset_db_peak_sequence 
+def reset_db_peak_sequence
   ActiveRecord::Base.connection.tables.each do |t|
     ActiveRecord::Base.connection.reset_pk_sequence!(t)
   end
@@ -121,6 +122,29 @@ def make_fake_tweets(user_ids, num)
   return result
 end
 ### Helper Methods
+def follower_follow_leader(follower_id,leader_id)
+  link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
+  if link.nil?
+      relation = Follow.new
+      relation.user_id = follower_id
+      relation.leader_id = leader_id
+      relation.follow_date = Time.now
+      relation.save
+
+      follower = User.find(follower_id)
+      leader = User.find(leader_id)
+
+      follower.number_of_leaders = 0 if follower.number_of_leaders == nil
+      leader.number_of_followers = 0 if leader.number_of_followers == nil
+
+      follower.number_of_leaders += 1
+      leader.number_of_followers += 1
+      follower.save
+      leader.save
+
+      return relation
+    end
+end
 ### Helper Methods
 ### Helper Methods
 
@@ -176,7 +200,7 @@ post '/test/reset/standard?' do
     pw = get_fake_password
     users_hashtable[uid] = name
     i = RETRY_LIMIT
-    while !User.new(id: uid, username: name, password: pw).save 
+    while !User.new(id: uid, username: name, password: pw).save
       break if i.negative?
       puts "Entering user: #{name}, id: #{uid} failed, and retry."
       i -= 1
@@ -195,7 +219,7 @@ post '/test/reset/standard?' do
   end
   # follow
   puts 'following done'
-  
+
   # post all tweets
   File.open('./seeds/tweets.csv', 'r').each do |line|
     break if num == 0 # enforce a limit if there is one
@@ -204,7 +228,7 @@ post '/test/reset/standard?' do
     text = str[1]
     time_stamp = str[2]
     i = RETRY_LIMIT
-    while !Tweet.new(user_id: id, message: text, timestamps: time_stamp).save 
+    while !Tweet.new(user_id: id, message: text, timestamps: time_stamp).save
       break if i.negative?
       puts "Entering tweet: #{text}, by: #{id} #{users_hashtable[id]} failed and retry."
       i -= 1
@@ -214,7 +238,7 @@ post '/test/reset/standard?' do
   # post all tweets
 
   recreate_testuser
-  reset_db_peak_sequence # reset sequence 
+  reset_db_peak_sequence # reset sequence
   result = { 'Result': 'GOOD!', 'status': report_status }
   result.to_json
 
