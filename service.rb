@@ -4,6 +4,7 @@ require 'byebug'
 require_relative 'test_interface.rb'
 require 'time_difference'
 require 'time'
+require 'rack_session_access'
 require_relative 'prefix.rb'
 require_relative 'erb_constants.rb'
 require_relative 'models/follow'
@@ -73,6 +74,7 @@ end
 
 # All other pages need to have these session objects checked.
 get PREFIX + '/' do
+  #byebug
   if protected!
     @curr_user = User.find(session[:user_id])
     leader_list = @curr_user.leaders

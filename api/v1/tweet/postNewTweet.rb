@@ -6,6 +6,8 @@ post PREFIX + '/tweets/new' do
   new_tweet = Tweet.new(user: usr, message: msg)
   mentions_list = mentions.split(" ")
   hashtags_list = hashtags.split(" ")
+
+  #byebug
   #hashtag_list =
   if new_tweet.save
     mentions_list.each do |mention|

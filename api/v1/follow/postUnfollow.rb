@@ -5,7 +5,7 @@ post PREFIX + "/user/:user_id/unfollow" do
     if !uncheck
         redirect PREFIX + "/user/#{params['user_id']}"
     else
-        'repeated unfollow'
+        redirect PREFIX + "/user/#{params['user_id']}"
     end
 end
 
