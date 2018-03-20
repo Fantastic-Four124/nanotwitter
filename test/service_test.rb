@@ -15,38 +15,19 @@ class ServiceTest < Minitest::Test
     Sinatra::Application
   end
 
-  def current_user_session
-    get PREFIX + '/', {}, { 'rack.session' => {user_id: current_user.id, user_hash: current_user, username: current_user.username} }
-  end
-
-  def current_user
-    if User.exists?(username: 'jim')
-      return User.where(username: 'jim')[0]
-    else
-      User.create({username: 'jim', password: 'abc', email: 'jim@jim.com'})
-      return User.where(username: 'jim')[0]
-    end
-  end
-
-
   def setup
+    @jim = User.create({username: 'jim', password: 'abc', email: 'jim@jim.com'})
+    @bob = User.create({username: 'bob', password: 'abc', email: 'bob@bob.com'})
     current_user_session
-    if !User.exists?(username: 'bob')
-      User.create({username: 'bob', password: 'abc', email: 'bob@bob.com'})
-    end
   end
 
   def teardown
-    jim.destroy
-    bob.destroy
+    @jim.destroy
+    @bob.destroy
   end
 
-  def bob
-    User.where(username: 'bob')[0]
-  end
-
-  def jim
-    current_user
+  def current_user_session
+    get PREFIX + '/', {}, { 'rack.session' => {user_id: @jim.id, user_hash: @jim, username: @jim.username} }
   end
 
   def test_home
@@ -82,29 +63,27 @@ class ServiceTest < Minitest::Test
     get PREFIX + '/'
     assert last_response.ok?
   end
-##
+
   def test_login_incorrectly
     get PREFIX + '/login'
     param = { 'username' => 'obviously wrong', 'password' => 'wrong' }
     post PREFIX + '/login', param.to_json, "CONTENT_TYPE" => "application/json"
     assert last_response.body.include?("Wrong password or username.")
   end
-##
+
   def test_logout
-#    # Need to log in, first.
     get PREFIX + '/login'
     param = { 'username' => 'jim', 'password' => 'abc' }
     post PREFIX + '/login', param.to_json, "CONTENT_TYPE" => "application/json"
     get PREFIX + '/'
     assert last_response.ok?
-    assert last_response.body.include?("jim") #Since that's part of a Tweet
-#    ## Then, log out.
+    assert last_response.body.include?('jim')
     post PREFIX + '/logout'
     get PREFIX + '/'
     assert last_response.ok?
     assert last_response.body.include?("Login to nanoTwitter")
   end
-#
+
   def test_tweet
     param = { 'username' => 'jim', 'password' => 'abc' }
     post PREFIX + '/login', param.to_json, "CONTENT_TYPE" => "application/json"
@@ -114,61 +93,50 @@ class ServiceTest < Minitest::Test
     assert !Tweet.find_by_message('I am a test message').nil?
     Tweet.find_by_message('I am a test message').destroy
   end
-#
+
   def test_user_page
     get PREFIX + '/login'
     param = { 'username' => 'jim', 'password' => 'abc' }
     post PREFIX + '/login', param.to_json, "CONTENT_TYPE" => "application/json"
-    get PREFIX + '/user/' + jim.id.to_s
+    get PREFIX + '/user/' + @jim.id.to_s
     assert last_response.ok?
-    assert last_response.body.include?("jim") #Since that's part of a Tweet
+    assert last_response.body.include?('jim')
   end
-#
+
   def test_user_timeline
-    get PREFIX + '/user/' + jim.id.to_s + '/timeline'
+    get PREFIX + '/user/' + @jim.id.to_s + '/timeline'
     assert last_response.ok?
-    assert last_response.body.include?("jim") #Since that's part of a Tweet
+    assert last_response.body.include?("jim")
   end
-#
+
   def test_user_followers
-    get PREFIX + '/user/' + jim.id.to_s + '/followers'
+    get PREFIX + '/user/' + @jim.id.to_s + '/followers'
     assert last_response.ok?
     assert last_response.body.include?('Followers')
   end
-#
+
   def test_user_leaders
-    get PREFIX + '/user/' + jim.id.to_s + '/leaders'
+    get PREFIX + '/user/' + @jim.id.to_s + '/leaders'
     assert last_response.ok?
     assert last_response.body.include?('Leaders')
   end
-#
+
   def test_follow
-    post PREFIX + '/user/' + bob.id.to_s + '/follow'
-    assert bob.followers.include?(current_user)
+    post PREFIX + '/user/' + @bob.id.to_s + '/follow'
+    assert @bob.followers.include?(@jim)
   end
-#
+
   def test_unfollow
-    jim.followers.push(bob)
-    post PREFIX + '/user/' + bob.id.to_s + '/unfollow'
-    assert !bob.followers.include?(current_user)
+    @jim.leaders.push(@bob)
+    post PREFIX + '/user/' + @bob.id.to_s + '/unfollow'
+    assert !@jim.leaders.include?(@bob)
   end
-#
+
   def test_search_basic
-    tweet = Tweet.create(message: 'lol', user_id: bob.id)
+    tweet = Tweet.create(message: 'lol', user_id: @bob.id)
     get PREFIX + '/search', {search: 'lol'}
     assert last_response.ok?
     assert last_response.body.include?('lol')
     tweet.destroy
   end
-#
-#  def test_search_users
-#    # Not yet implemented
-#    get '/search'
-#    assert last_response.ok?
-#  end
-#
-#  def test_search_results_fail
-#    fail
-#  end
-
 end
