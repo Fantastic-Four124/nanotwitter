@@ -14,6 +14,7 @@ GEM
       tzinfo (~> 1.1)
     arel (8.0.0)
     bcrypt (3.1.11)
+    builder (3.2.3)
     byebug (10.0.0)
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
@@ -36,6 +37,9 @@ GEM
       rack
     rack-test (0.8.2)
       rack (>= 1.0, < 3)
+    rack_session_access (0.1.1)
+      builder (>= 2.0.0)
+      rack (>= 1.0.0)
     rake (12.3.0)
     sinatra (2.0.1)
       mustermann (~> 1.0)
@@ -64,6 +68,7 @@ DEPENDENCIES
   pry-byebug
   rack
   rack-test
+  rack_session_access
   rake
   sinatra
   sinatra-activerecord

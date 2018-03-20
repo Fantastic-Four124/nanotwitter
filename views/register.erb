@@ -1,6 +1,6 @@
 <h2>Register in Nanotwitter</h2>
 <h4> <%=@texts%> </h4>
-<form action="/user/register" method="POST">
+<form action="<%= ErbConstants::ERBCON %>/user/register" method="POST">
   <input type="text" name="register[username]">
   <input type="text" name="register[password]">
   <input type="submit" value="Submit">
