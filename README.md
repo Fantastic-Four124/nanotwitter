@@ -50,7 +50,7 @@ The following was added to version 0.3:
 The following was added to version 0.4:
  - [x] An account to loader.io was created and the pilot tests were run. *(Performed by Cameron Cho)*
 
- - [ ] loader.io was utilized to sniff out bugs in the code.
+ - [x] loader.io was utilized to sniff out bugs in the code.
 
  - [x] Test driven development was employed to complete the testing interface. *(Performed by Alex Wu)*
 
