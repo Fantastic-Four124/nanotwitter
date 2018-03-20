@@ -33,9 +33,9 @@ The following was added to version 0.2:
 The following was added to version 0.3:
 - [x] Codeship account created for nanoTwitter project. It has also been set to autodeploy to Heroku whenever a team member pushes to GitHub. *(Performed by Cameron Cho)*
 
-- [x] Testing suite constructed with MiniTest. *(Performed by Alex Hu)*
+- [x] Testing suite constructed with MiniTest. *(Performed by Alex Hu and Cameron Cho)*
 
-- [x] Testing interface constructed. *(Performed by Alex Hu.)*
+- [x] Testing interface constructed. *(Performed by Alex Hu)*
 
 - [x] Seed data for testing retrieved. *(Performed by Tom Willkens and Cameron Cho)*
 
@@ -48,10 +48,12 @@ The following was added to version 0.3:
 
 ### Version 0.4
 The following was added to version 0.4:
- - [x] An account to loader.io was created and the pilot tests were run.
+ - [x] An account to loader.io was created and the pilot tests were run. *(Performed by Cameron Cho)*
 
  - [ ] loader.io was utilized to sniff out bugs in the code.
 
- - [ ] Test driven development was employed to complete the testing interface.
+ - [x] Test driven development was employed to complete the testing interface. *(Performed by Alex Wu)*
 
- - [ ] All members decided to log into nanoTwitter to start Tweeting and test it manually.
+ - [x] All members decided to log into nanoTwitter to start Tweeting and test it manually. *(Performed by everyone)*
+
+ - [x] Discussion on services started. *(Performed by everyone)*
