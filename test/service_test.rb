@@ -88,7 +88,7 @@ class ServiceTest < Minitest::Test
     post PREFIX + '/tweets/new', {:tweet => {message: "I am a test message", mention: '', hashtag: ''}}
     get PREFIX + '/'
     assert last_response.ok?
-    assert !Tweet.find_by_message('I am a test message').nil?
+    assert Tweet.find_by_message('I am a test message')
     Tweet.find_by_message('I am a test message').destroy
   end
 
@@ -124,12 +124,16 @@ class ServiceTest < Minitest::Test
     logged_in
     post PREFIX + '/user/' + @bob.id.to_s + '/follow'
     assert @bob.followers.include?(@jim)
+    assert @jim.leaders.include?(@bob)
   end
 
   def test_unfollow
     logged_in
     @jim.leaders.push(@bob)
+    assert @bob.followers.include?(@jim)
+    assert @jim.leaders.include?(@bob)
     post PREFIX + '/user/' + @bob.id.to_s + '/unfollow'
+    assert !@bob.followers.include?(@jim)
     assert !@jim.leaders.include?(@bob)
   end
 
