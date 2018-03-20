@@ -4,6 +4,7 @@ require 'rake/testtask'
 require_relative '../service.rb'
 require_relative '../erb_constants.rb'
 require_relative '../prefix.rb'
+require_relative './test_helper.rb'
 
 # These tests are not done yet! They still need to be filled out as we think of new functionality.
 
