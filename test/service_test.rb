@@ -1,6 +1,8 @@
 require 'minitest/autorun'
 require 'rack/test'
 require 'rake/testtask'
+require 'json'
+require 'rest-client'
 require_relative '../service.rb'
 require_relative '../erb_constants.rb'
 require_relative '../prefix.rb'
@@ -37,6 +39,7 @@ class ServiceTest < Minitest::Test
 
   def test_home
     not_logged_in
+    #byebug
     assert last_response.ok? && (last_response.body.include? 'Login to nanoTwitter')
   end
 
@@ -86,11 +89,14 @@ class ServiceTest < Minitest::Test
 
   def test_tweet
     logged_in
-    post PREFIX + '/tweets/new', {:tweet => {message: "I am a test message", mention: '', hashtag: ''}}
+    post PREFIX + '/tweets/new', {:tweet => {message: "I am a test message"}, :user_id => @jim.id}
     get PREFIX + '/'
     assert last_response.ok?
-    assert Tweet.find_by_message('I am a test message')
-    Tweet.find_by_message('I am a test message').destroy
+    tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: @jim.id}}) # Returns a list of 50 tweets sorted by most recent
+    assert tweets[0]["contents"] == 'I am a test message'
+    #RestClient.post 'http://192.168.33.10:8085/api/v1/tweets/delete', {id: tweets[0]["_id"]}
+    #assert Tweet.find_by_message('I am a test message')
+    #Tweet.find_by_message('I am a test message').destroy
   end
 
   def test_user_page

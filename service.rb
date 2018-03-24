@@ -4,6 +4,8 @@ require 'byebug'
 require_relative 'test_interface.rb'
 require 'time_difference'
 require 'time'
+require 'json'
+require 'rest-client'
 require_relative 'prefix.rb'
 require_relative 'erb_constants.rb'
 require_relative 'models/follow'
@@ -23,6 +25,9 @@ enable :sessions
 
 set :bind, '0.0.0.0' # Needed to work with Vagrant
 
+configure :production do
+  require 'newrelic_rpm'
+end
 
 # configure do
 #   set :twitter_client, false
@@ -51,6 +56,8 @@ end
 
 get PREFIX + '/login' do
   if protected!
+    byebug
+    @user_id = session[:user_id]
     redirect PREFIX + '/'
   else
     erb :login
@@ -139,9 +146,11 @@ end
 get PREFIX + '/user/:user_id' do
   if protected!
     @curr_user = User.find(params['user_id'])
-    tweets = Tweet.where("user_id = '#{@curr_user.id}'").sort_by &:created_at
-    tweets.reverse!
-    @tweets = tweets[0..49]
+    @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: session[:user_id]}})
+    #byebug
+    #tweets = Tweet.where("user_id = '#{@curr_user.id}'").sort_by &:created_at
+    #tweets.reverse!
+    #@tweets = tweets[0..49]
     erb :tweet_feed
   else
     redirect PREFIX + '/'
