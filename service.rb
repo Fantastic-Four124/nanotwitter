@@ -86,7 +86,7 @@ get PREFIX + '/' do
     leader_list = @curr_user.leaders
     tweets = []
     leader_list.each do |leader|
-      subtweets = Tweet.where("user_id = '#{leader.id}'")
+      subtweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: leader.id}})
       tweets.push(*subtweets)
     end
     tweets.sort_by &:created_at
@@ -101,9 +101,9 @@ get PREFIX + '/' do
     # @tweets = tweets[0..49]
     # erb :logged_root
   else
-    tweets = Tweet.all.sort_by &:created_at
-    tweets.reverse!
-    @tweets = tweets[0..49]
+    # tweets = Tweet.all.sort_by &:created_at
+    # tweets.reverse!
+      @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/recent', {})
     erb :tweet_feed
   end
 end
