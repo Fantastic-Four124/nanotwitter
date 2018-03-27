@@ -15,7 +15,7 @@ require_relative 'models/tweet'
 require_relative 'models/hashtag_tweets'
 
 configure do
-    uri = URI.parse("redis://rediscloud:v9kVElhWA8oDSNvAo5MS5RBJzUbV4EI0@redis-12440.c14.us-east-1-3.ec2.cloud.redislabs.com:12440")
+    uri = URI.parse("redis://rediscloud:5lKsZnGwfn5y9O12JAQ7T8vIWAKrr0P8@redis-16859.c14.us-east-1-3.ec2.cloud.redislabs.com:16859")
     $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
     #byebug
 end
@@ -110,7 +110,7 @@ get PREFIX + '/' do
       tweet = Tweet.find(id)
       @tweets.push(*tweet)
     end
-    byebug
+    # byebug
     erb :tweet_feed
   end
 end
