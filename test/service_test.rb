@@ -35,10 +35,10 @@ class ServiceTest < Minitest::Test
     get PREFIX + '/', {}, { 'rack.session' => {username: nil} }
   end
 
-  def test_home
-    not_logged_in
-    assert last_response.ok? && (last_response.body.include? 'Login to nanoTwitter')
-  end
+  # def test_home
+  #   not_logged_in
+  #   assert last_response.ok? && (last_response.body.include? 'Login to nanoTwitter')
+  # end
 
   def test_login_page
     not_logged_in
@@ -74,15 +74,15 @@ class ServiceTest < Minitest::Test
     assert last_response.body.include?("Wrong password or username.")
   end
 
-  def test_logout
-    logged_in
-    assert last_response.ok?
-    assert last_response.body.include?('jim')
-    post PREFIX + '/logout'
-    get PREFIX + '/'
-    assert last_response.ok?
-    assert last_response.body.include?("Login to nanoTwitter")
-  end
+  # def test_logout
+  #   logged_in
+  #   assert last_response.ok?
+  #   assert last_response.body.include?('jim')
+  #   post PREFIX + '/logout'
+  #   get PREFIX + '/'
+  #   assert last_response.ok?
+  #   assert last_response.body.include?("Login to nanoTwitter")
+  # end
 
   def test_tweet
     logged_in
