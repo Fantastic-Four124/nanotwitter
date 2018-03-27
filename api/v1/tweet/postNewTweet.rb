@@ -10,6 +10,8 @@ post PREFIX + '/tweets/new' do
   #byebug
   #hashtag_list =
   if new_tweet.save
+    $redis.lpush('global', new_tweet.id)
+    $redis.rpop('global') if $redis.llen('global') > 50
     mentions_list.each do |mention|
       if /([@.])\w+/.match(mention)
         term = mention[1..-1]

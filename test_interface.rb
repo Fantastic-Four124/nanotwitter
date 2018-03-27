@@ -112,8 +112,11 @@ def make_fake_tweets(user_ids, num)
     ]
     msg = txts.sample
     usr_id = user_ids.sample
-    if Tweet.new(user_id: usr_id, message: msg).save
+    new_tweet = Tweet.new(user_id: usr_id, message: msg)
+    if new_tweet.save
       result[usr_id] = msg
+      $redis.lpush('global', new_tweet.id)                # Cache it
+      $redis.rpop('global') if $redis.llen('global') > 50 # Cache it
     else
       puts 'Fake tweet Failed.'
     end
@@ -267,6 +270,7 @@ post '/test/users/create?' do
     end
     count -= 1
   end
+
   # Fake tweets
   result = {
     'New Fake Users': new_ppl,

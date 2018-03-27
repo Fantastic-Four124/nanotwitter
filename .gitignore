@@ -2,3 +2,4 @@
 db/schema.rb
 Gemfile.lock
 db/schema.rb
+.byebug_history
