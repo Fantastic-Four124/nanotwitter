@@ -4,7 +4,6 @@ require 'rake/testtask'
 require_relative '../service.rb'
 require_relative '../erb_constants.rb'
 require_relative '../prefix.rb'
-require_relative './test_helper.rb'
 
 # These tests are not done yet! They still need to be filled out as we think of new functionality.
 
@@ -16,15 +15,23 @@ class ServiceTest < Minitest::Test
     Sinatra::Application
   end
 
+  def clearRedis
+    while $redis.llen('global') > 0
+      $redis.rpop('global')
+    end
+  end
+
   def setup
     @jim = User.create({username: 'jim', password: 'abc', email: 'jim@jim.com'})
     @bob = User.create({username: 'bob', password: 'abc', email: 'bob@bob.com'})
+    clearRedis
   end
 
   def teardown
     @jim.destroy
     @bob.destroy
     not_logged_in
+    clearRedis
   end
 
   def logged_in
@@ -35,10 +42,10 @@ class ServiceTest < Minitest::Test
     get PREFIX + '/', {}, { 'rack.session' => {username: nil} }
   end
 
-  # def test_home
-  #   not_logged_in
-  #   assert last_response.ok? && (last_response.body.include? 'Login to nanoTwitter')
-  # end
+  def test_home
+    not_logged_in
+    assert last_response.ok? && (last_response.body.include? 'Login to nanoTwitter')
+  end
 
   def test_login_page
     not_logged_in
@@ -74,15 +81,15 @@ class ServiceTest < Minitest::Test
     assert last_response.body.include?("Wrong password or username.")
   end
 
-  # def test_logout
-  #   logged_in
-  #   assert last_response.ok?
-  #   assert last_response.body.include?('jim')
-  #   post PREFIX + '/logout'
-  #   get PREFIX + '/'
-  #   assert last_response.ok?
-  #   assert last_response.body.include?("Login to nanoTwitter")
-  # end
+  def test_logout
+    logged_in
+    assert last_response.ok?
+    assert last_response.body.include?('jim')
+    post PREFIX + '/logout'
+    get PREFIX + '/'
+    assert last_response.ok?
+    assert last_response.body.include?("Login to nanoTwitter")
+  end
 
   def test_tweet
     logged_in
