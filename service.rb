@@ -86,7 +86,8 @@ get PREFIX + '/' do
     leader_list = @curr_user.leaders
     tweets = []
     leader_list.each do |leader|
-      subtweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: leader.id}})
+       # subtweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: leader.id}})
+      subtweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:user_id', {params: {id: leader.id}})
       tweets.push(*subtweets)
     end
     tweets.sort_by &:created_at
@@ -103,7 +104,8 @@ get PREFIX + '/' do
   else
     # tweets = Tweet.all.sort_by &:created_at
     # tweets.reverse!
-      @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/recent', {})
+    # @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/recent', {})
+    @tweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/recent', {})
     erb :tweet_feed
   end
 end
@@ -146,7 +148,8 @@ end
 get PREFIX + '/user/:user_id' do
   if protected!
     @curr_user = User.find(params['user_id'])
-    @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: session[:user_id]}})
+    # @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: session[:user_id]}})
+    @tweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:user_id', {params: {id: session[:user_id]}})
     #byebug
     #tweets = Tweet.where("user_id = '#{@curr_user.id}'").sort_by &:created_at
     #tweets.reverse!

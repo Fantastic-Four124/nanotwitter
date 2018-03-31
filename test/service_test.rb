@@ -92,7 +92,8 @@ class ServiceTest < Minitest::Test
     post PREFIX + '/tweets/new', {:tweet => {message: "I am a test message"}, :user_id => @jim.id}
     get PREFIX + '/'
     assert last_response.ok?
-    tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: @jim.id}}) # Returns a list of 50 tweets sorted by most recent
+    # tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: @jim.id}}) # Returns a list of 50 tweets sorted by most recent
+    tweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:user_id', {params: {id: @jim.id}}) # Returns a list of 50 tweets sorted by most recent
     assert tweets[0]["contents"] == 'I am a test message'
     #RestClient.post 'http://192.168.33.10:8085/api/v1/tweets/delete', {id: tweets[0]["_id"]}
     #assert Tweet.find_by_message('I am a test message')
