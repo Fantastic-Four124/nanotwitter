@@ -6,7 +6,6 @@ require 'rest-client'
 require_relative '../service.rb'
 require_relative '../erb_constants.rb'
 require_relative '../prefix.rb'
-require_relative './test_helper.rb'
 
 # These tests are not done yet! They still need to be filled out as we think of new functionality.
 
@@ -18,15 +17,23 @@ class ServiceTest < Minitest::Test
     Sinatra::Application
   end
 
+  def clearRedis
+    while $redis.llen('global') > 0
+      $redis.rpop('global')
+    end
+  end
+
   def setup
     @jim = User.create({username: 'jim', password: 'abc', email: 'jim@jim.com'})
     @bob = User.create({username: 'bob', password: 'abc', email: 'bob@bob.com'})
+    clearRedis
   end
 
   def teardown
     @jim.destroy
     @bob.destroy
     not_logged_in
+    clearRedis
   end
 
   def logged_in

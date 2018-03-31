@@ -6,6 +6,7 @@ require 'time_difference'
 require 'time'
 require 'json'
 require 'rest-client'
+require 'redis'
 require_relative 'prefix.rb'
 require_relative 'erb_constants.rb'
 require_relative 'models/follow'
@@ -14,6 +15,12 @@ require_relative 'models/hashtag'
 require_relative 'models/mention'
 require_relative 'models/tweet'
 require_relative 'models/hashtag_tweets'
+
+configure do
+    uri = URI.parse("redis://rediscloud:5lKsZnGwfn5y9O12JAQ7T8vIWAKrr0P8@redis-16859.c14.us-east-1-3.ec2.cloud.redislabs.com:16859")
+    $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+    #byebug
+end
 
 Dir[File.dirname(__FILE__) + '/api/v1/user/*.rb'].each { |file| require file }
 Dir[File.dirname(__FILE__) + '/api/v1/hashtag/*.rb'].each { |file| require file }
