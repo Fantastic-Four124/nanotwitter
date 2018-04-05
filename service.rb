@@ -93,21 +93,14 @@ get PREFIX + '/' do
     leader_list = @curr_user.leaders
     tweets = []
     leader_list.each do |leader|
-       # subtweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: leader.id}})
-      subtweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:user_id', {params: {id: leader.id}})
+      # subtweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:username', {params: {name: leader.username}})
+      subtweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:username', {params: {name: leader.username}})
       tweets.push(*subtweets)
     end
     tweets.sort_by &:created_at
     tweets.reverse!
     @tweets = tweets[0..49]
     erb :logged_root
-    #@curr_user = session[:user_hash]
-    # The number will be dynamically changing. We should think about how to change
-    # @curr_user = User.find(session[:user_id])
-    # tweets = Tweet.where("user_id = '#{session[:user_id]}'").sort_by &:created_at
-    # tweets.reverse!
-    # @tweets = tweets[0..49]
-    # erb :logged_root
   else
     # tweets = Tweet.all.sort_by &:created_at
     # tweets.reverse!
@@ -155,8 +148,8 @@ end
 get PREFIX + '/user/:user_id' do
   if protected!
     @curr_user = User.find(params['user_id'])
-    # @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: session[:user_id]}})
-    @tweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:user_id', {params: {id: session[:user_id]}})
+    # @tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:username', {params: {name: session[:username]}})
+    @tweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:username', {params: {name: session[:username]}})
     #byebug
     #tweets = Tweet.where("user_id = '#{@curr_user.id}'").sort_by &:created_at
     #tweets.reverse!

@@ -46,7 +46,7 @@ class ServiceTest < Minitest::Test
 
   def test_home
     not_logged_in
-    #byebug
+    # byebug
     assert last_response.ok? && (last_response.body.include? 'Login to nanoTwitter')
   end
 
@@ -96,11 +96,11 @@ class ServiceTest < Minitest::Test
 
   def test_tweet
     logged_in
-    post PREFIX + '/tweets/new', {:tweet => {message: "I am a test message"}, :user_id => @jim.id}
+    post PREFIX + '/tweets/new', {:tweet => {message: "I am a test message"}, :username => @jim.username}
     get PREFIX + '/'
     assert last_response.ok?
-    # tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:user_id', {params: {id: @jim.id}}) # Returns a list of 50 tweets sorted by most recent
-    tweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:user_id', {params: {id: @jim.id}}) # Returns a list of 50 tweets sorted by most recent
+    # tweets = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/tweets/:username', {params: {name: @jim.username}}) # Returns a list of 50 tweets sorted by most recent
+    tweets = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/tweets/:username', {params: {name: @jim.username}}) # Returns a list of 50 tweets sorted by most recent
     assert tweets[0]["contents"] == 'I am a test message'
     #RestClient.post 'http://192.168.33.10:8085/api/v1/tweets/delete', {id: tweets[0]["_id"]}
     #assert Tweet.find_by_message('I am a test message')
@@ -154,11 +154,10 @@ class ServiceTest < Minitest::Test
 
   def test_search_basic
     logged_in
-    tweet = Tweet.create(message: 'lol', user_id: @bob.id)
+    post PREFIX + '/tweets/new', {:tweet => {message: "lol"}, :username => @bob.username, :user_id => @bob.id}
     get PREFIX + '/search', {search: 'lol'}
     assert last_response.ok?
     assert last_response.body.include?('lol')
     assert last_response.body.include?('jim')
-    tweet.destroy
   end
 end

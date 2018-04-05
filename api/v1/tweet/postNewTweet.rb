@@ -3,7 +3,8 @@ require 'json'
 require 'redis'
 
 post PREFIX + '/tweets/new' do
-  usr = session[:user_id]
+  usr = session[:username]
+  usr_id = session[:user_id]
   msg = params[:tweet]['message']
   mentions = Array.new
   hashtags = Array.new
@@ -25,8 +26,8 @@ post PREFIX + '/tweets/new' do
   end
   #byebug
   #Yes, it must be hard-coded at the moment...
-  response = RestClient.post 'https://nt-tweet-writer.herokuapp.com/api/v1/tweets/new', {contents: msg, user_id: usr, hashtags: hashtags.to_json, mentions: mentions.to_json}
-  # response = RestClient.post 'http://192.168.33.10:8085//api/v1/tweets/new', {contents: msg, user_id: usr, hashtags: hashtags.to_json, mentions: mentions.to_json}
+  response = RestClient.post 'https://nt-tweet-writer.herokuapp.com/api/v1/tweets/new', {contents: msg, username: usr, user_id: usr_id, hashtags: hashtags.to_json, mentions: mentions.to_json}
+  # response = RestClient.post 'http://192.168.33.10:8085/api/v1/tweets/new', {contents: msg, username: usr, user_id: usr_id, hashtags: hashtags.to_json, mentions: mentions.to_json}
   resp_hash = JSON.parse(response)
   #byebug
   if resp_hash['saved'] == 'true'

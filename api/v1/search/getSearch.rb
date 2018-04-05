@@ -7,9 +7,13 @@ get PREFIX + '/search' do
       term = term[1..-1]
       @results = User.where("username like ?", "%#{term}%")
       @user_search = true
+    elsif /([#.])\w+/.match(term)
+      @results = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/hashtags/:term', {params: {label: term}})
+      # @results = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/hashtags/:term', {params: {label: term}})
+      @user_search = false
     else
-      @results = Tweet.where("message like ?", "%#{term}%").sort_by &:created_at
-      @results.reverse!
+      @results = JSON.parse(RestClient.get 'https://nt-tweet-reader.herokuapp.com/api/v1/hashtags/:term', {params: {label: term}})
+      # @results = JSON.parse(RestClient.get 'http://192.168.33.10:8090/api/v1/searches/:term', {params: {word: term}})
       @user_search = false
     end
   else
